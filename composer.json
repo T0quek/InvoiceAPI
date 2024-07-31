@@ -1,0 +1,6 @@
+{
+    "require": {
+      "ext-json": "*",
+        "dompdf/dompdf": "^3.0"
+    }
+}
