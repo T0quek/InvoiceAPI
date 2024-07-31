@@ -10,7 +10,7 @@ function wstep($data, $miejscowosc, $sprzedawca, $termin_platnosci, $nabywca, $i
     <style>
         @page {
             margin: 0 20px 0 20px;
-            font-family: DejaVu Sans;
+            font-family: DejaVu Sans,serif;
             font-size: 12px;
         }
         
