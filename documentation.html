@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INVOICE HTTP GENERATOR</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+        }
+        .content {
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-6 text-center">
+            <p class="mt-5">Choose your language / Wybierz język</p>
+            <button id="btn-en" class="btn btn-primary m-2">English</button>
+            <button id="btn-pl" class="btn btn-secondary m-2">Polski</button>
+        </div>
+    </div>
+    <div id="content" class="row justify-content-center content">
+        <!-- Content will be loaded here -->
+    </div>
+</div>
+
+<script>
+    document.getElementById('btn-en').addEventListener('click', function() {
+        loadContent('en');
+    });
+
+    document.getElementById('btn-pl').addEventListener('click', function() {
+        loadContent('pl');
+    });
+
+    function loadContent(language) {
+        const contentDiv = document.getElementById('content');
+        if (language === 'en') {
+            contentDiv.innerHTML = `
+                    <div class="col-12">
+                        <h2>Introduction</h2>
+                        <p>The INVOICE HTTP GENERATOR 1.0 web application allows for quick generation of a ready-to-use PDF file with an invoice sheet based on the provided data and parameters using an HTTP request. The application returns content in PDF format with the header "Content-Type": "application/pdf". This document contains the full specification of this software.</p>
+
+                        <h2>Invocation</h2>
+                        <p>The application is available at https://invoice.toquek.pl/?data= and can be run in a browser or using special software/libraries for making HTTP requests. Generating a PDF file requires creating a GET request to the given URL. The "data" attribute should contain a properly formatted JSON array according to the documentation below.</p>
+
+                        <h2>Data Preparation</h2>
+                        <p>The data that will be passed to the application should be properly formatted in the form of a JSON array. You should also use the Escape String function on characters that require it (e.g., spaces) if necessary. All document parameters should be provided according to the following schema:</p>
+
+                        <pre><code>
+{
+    // Required parameters //
+    "id": "unique Id",
+    [...]
+
+    // Optional parameters //
+    "language": "en",
+    [...]
+
+    // Invoice rows //
+    "rows": [
+        { // Row data // }
+        [...]
+    ]
+}
+                        </code></pre>
+
+                        <h2>Required Arguments</h2>
+                        <table class="table table-dark table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Possible Formats</th>
+                                    <th>Description</th>
+                                    <th>Example</th>
+                                    <th>Default Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>id</td>
+                                    <td>string</td>
+                                    <td>A unique identifier of the document that uniquely identifies it. This name also becomes the file name (when downloading the file in the browser).</td>
+                                    <td>"JSHG-XYZA-ABCDE"</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>paymentDate</td>
+                                    <td>string</td>
+                                    <td>The payment date can be provided in any format (e.g., dd/mm/YYYY). It indicates the final date of the described transaction.</td>
+                                    <td>"01/10/2025"</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>rows</td>
+                                    <td>array of JSON objects</td>
+                                    <td>An array containing individual document items must contain at least one item in the form of a JSON array as described in the section "Arguments for a Single Row".</td>
+                                    <td>See "Arguments for a Single Row"</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h2>Arguments for a Single Row</h2>
+                        <table class="table table-dark table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Possible Formats</th>
+                                    <th>Description</th>
+                                    <th>Example</th>
+                                    <th>Default Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>name</td>
+                                    <td>string</td>
+                                    <td>The name of the described good or service.</td>
+                                    <td>"Apple"</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>number</td>
+                                    <td>int or float</td>
+                                    <td>The quantity of the described good or service.</td>
+                                    <td>"3.4"</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>netPrice</td>
+                                    <td>string, int, or float</td>
+                                    <td>The net price of a single product or service unit. The price is always rounded down to two decimal places.</td>
+                                    <td>"13,24"</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>grossPrice</td>
+                                    <td>string, int, or float</td>
+                                    <td>The gross price of a single product or service unit. The price is always rounded down to two decimal places.</td>
+                                    <td>"15,23"</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h2>Optional Arguments</h2>
+                        <table class="table table-dark table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Possible Formats</th>
+                                    <th>Description</th>
+                                    <th>Example</th>
+                                    <th>Default Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>issueDate</td>
+                                    <td>string</td>
+                                    <td>The document issue date. The format is optional, but the suggested format is dd/mm/YYYY HH:ii:ss.</td>
+                                    <td>"10/11/2023 12:30:00"</td>
+                                    <td>current date and time</td>
+                                </tr>
+                                <tr>
+                                    <td>city</td>
+                                    <td>string</td>
+                                    <td>The name of the city/town where the document was issued. It is placed after the document issue date.</td>
+                                    <td>"New York"</td>
+                                    <td>""</td>
+                                </tr>
+                                <tr>
+                                    <td>seller</td>
+                                    <td>string</td>
+                                    <td>The name of the seller or entity issuing the document. You can use the '|' character to create a new line to separate key data.</td>
+                                    <td>"Vortex Company | Institution of Technology"</td>
+                                    <td>""</td>
+                                </tr>
+                                <tr>
+                                    <td>buyer</td>
+                                    <td>string</td>
+                                    <td>The name of the buyer or entity purchasing. You can use the '|' character to create a new line to separate key data.</td>
+                                    <td>"John Smith | +14844761234"</td>
+                                    <td>""</td>
+                                </tr>
+                                <tr>
+                                    <td>signature</td>
+                                    <td>string</td>
+                                    <td>The signature of the seller/entity issuing the document, placed at the bottom of the document.</td>
+                                    <td>"Jacob Butch - CEO"</td>
+                                    <td>""</td>
+                                </tr>
+                                <tr>
+                                    <td>unitOfMeasures</td>
+                                    <td>string</td>
+                                    <td>The unit of measure used to describe each item of goods or services, e.g., kg, hour, pound, etc.</td>
+                                    <td>"kg"</td>
+                                    <td>kg</td>
+                                </tr>
+                                <tr>
+                                    <td>paymentMethod</td>
+                                    <td>string</td>
+                                    <td>The payment method used or selected by the buyer.</td>
+                                    <td>"kg"</td>
+                                    <td>""</td>
+                                </tr>
+                                <tr>
+                                    <td>language</td>
+                                    <td>string</td>
+                                    <td>The language used for the document template. Available languages are: "en" - English, "pl" - Polish.</td>
+                                    <td>"en"</td>
+                                    <td>pl</td>
+                                </tr>
+                                <tr>
+                                    <td>currency</td>
+                                    <td>string</td>
+                                    <td>The selected currency in the format of a three-letter uppercase abbreviation. Acceptable currencies are: PLN, USD, CAD, GBP, EUR, JPY, RUB, CNY, AUD, CHF, SEK, NOK, BRL, MXN, INR, ZAR, TRY, KRW, SGD, NZD.</td>
+                                    <td>"PLN"</td>
+                                    <td>PLN</td>
+                                </tr>
+                                <tr>
+                                    <td>priceInWords</td>
+                                    <td>bool, string or int</td>
+                                    <td>A boolean flag indicating whether the total amount of the document should also be expressed in words. Only Polish language ("language":"pl") is supported. Accepted values are: True, False, true, false, 1, 0.</td>
+                                    <td>true</td>
+                                    <td>false</td>
+                                </tr>
+                                <tr>
+                                    <td>additionalFooter</td>
+                                    <td>string</td>
+                                    <td>Additional information placed in the document footer, e.g., information about a special VAT rate if necessary.</td>
+                                    <td>"Generated by invoiceAPI"</td>
+                                    <td>""</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h2>Usage Example</h2>
+                        <pre><code>
+https://invoice.toquek.pl/?data={
+    "id":"JSHG-XYZA-ABCDE",
+    "paymentDate":"01/10/2025",
+    "rows": [
+        {"name":"Apple", "number":"3.4", "netPrice":"13,24", "grossPrice":"15,23"},
+        {"name":"Orange", "number":"21", "netPrice":"16.51", "grossPrice":"17"}
+    ],
+    "issueDate":"",
+    "city":"New York",
+    "seller":"Vortex Company | Institution of Technology",
+    "buyer":"John Smith | +14844761234",
+    "unitOfMeasures":"kg",
+    "signature":"Jacob Butch - CEO",
+    "paymentMethod":"Money Transfer",
+    "language":"pl",
+    "currency":"PLN",
+    "priceInWords":true,
+    "additionalFooter":"Generated by invoiceAPI"
+}
+                        </code></pre>
+                    </div>
+                `;
+        } else {
+            contentDiv.innerHTML = `
+                    <div class="col-12">
+                        <h2>Wprowadzenie</h2>
+                        <p>Aplikacja webowa INVOICE HTTP GENERATOR 1.0 umożliwia szybkie generowanie gotowego pliku PDF z arkuszem faktury na podstawie przesłanych danych i parametrów z użyciem zapytania HTTP. Aplikacja zwraca treść w formacie PDF z nagłówkiem "Content-Type": "application/pdf". W poniższym dokumencie znajduje się pełna specyfikacja tego oprogramowania.</p>
+
+                        <h2>Wywołanie</h2>
+                        <p>Aplikacja jest dostępna pod adresem https://invoice.toquek.pl/?data= i można ją uruchomić w przeglądarce lub za pomocą specjalnego oprogramowania/bibliotek do wykonywania zapytań HTTP. Generowanie pliku PDF wymaga utworzenia żądania typu GET na podany adres URL. W atrybucie o nazwie "data" należy przekazać odpowiednio spreparowaną tablicę JSON zgodnie z opisaną poniżej dokumentacją.</p>
+
+                        <h2>Przygotowywanie danych</h2>
+                        <p>Dane które zostaną przekazane do aplikacji należy odpowiednio spreparować w formie tablicy JSON. Należy również użyć funkcji Escape String na znakach które tego wymagają (na przykład spacje) jeśli jest to konieczne. Wszystkie parametry dokumentu powinny być dostarczone zgodnie z poniższym schematem:</p>
+
+                        <pre><code>
+{
+    // Wymagane parametry //
+    "id": "unikalne Id",
+    [...]
+
+    // Opcjonalne parametry //
+    "language": "pl",
+    [...]
+
+    // Pozycje na fakturze //
+    "rows": [
+        { // Dane poszczególnych wierszy // }
+        [...]
+    ]
+}
+                        </code></pre>
+
+                        <h2>Wymagane argumenty</h2>
+                        <table class="table table-dark table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nazwa</th>
+                                    <th>Możliwe formaty</th>
+                                    <th>Opis</th>
+                                    <th>Przykład</th>
+                                    <th>Wartość domyślna</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>id</td>
+                                    <td>string</td>
+                                    <td>Unikalny identyfikator dokumentu, który jednoznacznie go identyfikuje. Ta nazwa staje się również nazwą pliku (w przypadku pobierania pliku w przeglądarce).</td>
+                                    <td>"JSHG-XYZA-ABCDE"</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>paymentDate</td>
+                                    <td>string</td>
+                                    <td>Data płatności, która może być podana w dowolnym formacie (np. dd/mm/YYYY). Wskazuje na ostateczną datę realizacji opisywanej transakcji.</td>
+                                    <td>"01/10/2025"</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>rows</td>
+                                    <td>tablica obiektów JSON</td>
+                                    <td>Tablica zawierająca poszczególne pozycje dokumentu musi zawierać przynajmniej jedną pozycję w formie tablicy JSON zgodnie z opisem w sekcji "Argumenty pojedynczego wiersza".</td>
+                                    <td>Zobacz "Argumenty pojedynczego wiersza"</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h2>Argumenty pojedynczego wiersza</h2>
+                        <table class="table table-dark table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nazwa</th>
+                                    <th>Możliwe formaty</th>
+                                    <th>Opis</th>
+                                    <th>Przykład</th>
+                                    <th>Wartość domyślna</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>name</td>
+                                    <td>string</td>
+                                    <td>Nazwa opisywanego towaru lub usługi.</td>
+                                    <td>"Apple"</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>number</td>
+                                    <td>int lub float</td>
+                                    <td>Ilość opisywanego towaru lub usługi.</td>
+                                    <td>"3.4"</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>netPrice</td>
+                                    <td>string, int, lub float</td>
+                                    <td>Cena netto pojedynczego produktu lub jednostki usługi. Cena jest zawsze zaokrąglana do dwóch miejsc po przecinku w dół.</td>
+                                    <td>"13,24"</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>grossPrice</td>
+                                    <td>string, int, lub float</td>
+                                    <td>Cena brutto pojedynczego produktu lub jednostki usługi. Cena jest zawsze zaokrąglana do dwóch miejsc po przecinku w dół.</td>
+                                    <td>"15,23"</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h2>Opcjonalne argumenty</h2>
+                        <table class="table table-dark table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nazwa</th>
+                                    <th>Możliwe formaty</th>
+                                    <th>Opis</th>
+                                    <th>Przykład</th>
+                                    <th>Wartość domyślna</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>issueDate</td>
+                                    <td>string</td>
+                                    <td>Data wystawienia dokumentu. Format jest dowolny, ale sugerowany to dd/mm/YYYY HH:ii:ss.</td>
+                                    <td>"10/11/2023 12:30:00"</td>
+                                    <td>aktualna data i godzina</td>
+                                </tr>
+                                <tr>
+                                    <td>city</td>
+                                    <td>string</td>
+                                    <td>Nazwa miasta/miejscowości, w której został wystawiony dokument. Jest umieszczana po dacie wystawienia dokumentu.</td>
+                                    <td>"New York"</td>
+                                    <td>""</td>
+                                </tr>
+                                <tr>
+                                    <td>seller</td>
+                                    <td>string</td>
+                                    <td>Nazwa sprzedającego lub podmiotu wystawiającego dokument. Można użyć znaku '|' do utworzenia nowej linii w celu oddzielenia kluczowych danych.</td>
+                                    <td>"Vortex Company | Institution of Technology"</td>
+                                    <td>""</td>
+                                </tr>
+                                <tr>
+                                    <td>buyer</td>
+                                    <td>string</td>
+                                    <td>Nazwa kupującego lub podmiotu kupującego. Można użyć znaku '|' do utworzenia nowej linii w celu oddzielenia kluczowych danych.</td>
+                                    <td>"John Smith | +14844761234"</td>
+                                    <td>""</td>
+                                </tr>
+                                <tr>
+                                    <td>signature</td>
+                                    <td>string</td>
+                                    <td>Podpis osoby/podmiotu sprzedającego umieszczony w dolnej części dokumentu.</td>
+                                    <td>"Jacob Butch - CEO"</td>
+                                    <td>""</td>
+                                </tr>
+                                <tr>
+                                    <td>unitOfMeasures</td>
+                                    <td>string</td>
+                                    <td>Jednostka miary używana do opisania każdej pozycji towaru lub usługi np. kg, godzina, funt itp.</td>
+                                    <td>"kg"</td>
+                                    <td>sztuk</td>
+                                </tr>
+                                <tr>
+                                    <td>paymentMethod</td>
+                                    <td>string</td>
+                                    <td>Użyta lub wybrana przez kupującego metoda płatności.</td>
+                                    <td>"Money Transfer"</td>
+                                    <td>""</td>
+                                </tr>
+                                <tr>
+                                    <td>language</td>
+                                    <td>string</td>
+                                    <td>Używany język szablonu dokumentu. Dostępne języki to: "en" - język angielski, "pl" - język polski.</td>
+                                    <td>"pl"</td>
+                                    <td>pl</td>
+                                </tr>
+                                <tr>
+                                    <td>currency</td>
+                                    <td>string</td>
+                                    <td>Wybrana waluta w formacie trzyliterowego skrótu złożonego z wielkich liter. Dopuszczalne waluty to: PLN, USD, CAD, GBP, EUR, JPY, RUB, CNY, AUD, CHF, SEK, NOK, BRL, MXN, INR, ZAR, TRY, KRW, SGD, NZD.</td>
+                                    <td>"PLN"</td>
+                                    <td>PLN</td>
+                                </tr>
+                                <tr>
+                                    <td>priceInWords</td>
+                                    <td>bool</td>
+                                    <td>Flaga typu bool określająca czy łączna kwota dokumentu ma być również wyrażona słownie. Obsługiwany jest jedynie język polski ("language":"pl"). Akceptowane wartości to: True, False, true, false, 1, 0.</td>
+                                    <td>true</td>
+                                    <td>false</td>
+                                </tr>
+                                <tr>
+                                    <td>additionalFooter</td>
+                                    <td>string</td>
+                                    <td>Dodatkowa informacja umieszczona w stopce dokumentu np. informacja o specjalnej stawce VAT gdy jest to konieczne.</td>
+                                    <td>"Generated by invoiceAPI"</td>
+                                    <td>""</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h2>Przykład użycia</h2>
+                        <pre><code>
+https://invoice.toquek.pl/?data={
+    "id":"JSHG-XYZA-ABCDE",
+    "paymentDate":"01/10/2025",
+    "rows": [
+        {"name":"Apple", "number":"3.4", "netPrice":"13,24", "grossPrice":"15,23"},
+        {"name":"Orange", "number":"21", "netPrice":"16.51", "grossPrice":"17"}
+    ],
+    "issueDate":"",
+    "city":"New York",
+    "seller":"Vortex Company | Institution of Technology",
+    "buyer":"John Smith | +14844761234",
+    "unitOfMeasures":"kg",
+    "signature":"Jacob Butch - CEO",
+    "paymentMethod":"Money Transfer",
+    "language":"pl",
+    "currency":"PLN",
+    "priceInWords":true,
+    "additionalFooter":"Generated by invoiceAPI"
+}
+                        </code></pre>
+                    </div>
+                `;
+        }
+    }
+</script>
+</body>
+</html>
